@@ -11,7 +11,7 @@ from Chess import ChessEngine
 WIDTH = HEIGHT = 512  # 400 is another option
 DIMENSION = 8  # dimensions of a chess board are 8x8
 SQ_SIZE = HEIGHT // DIMENSION
-MAX_FPS = 15  # for animations later on
+MAX_FPS = 60  # for animations later on
 IMAGES = {}
 
 ''' 
@@ -56,6 +56,9 @@ def main():
                     gs.makeMove(move)
                     sqSelected = ()  # reset user clicks
                     playerClicks = []
+            elif e.type == p.KEYDOWN:
+                if e.key == p.K_z:  # undo when 'z' is pressed
+                    gs.undoMove()
         # Call drawGameState to render the board and pieces
         drawGameState(screen, gs)
         
