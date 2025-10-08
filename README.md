@@ -1,2 +1,2 @@
 # Chess-Engine
-// yoyoyoyooyoyoy
+To start write command python ChessMain.py
