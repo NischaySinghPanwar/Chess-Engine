@@ -37,6 +37,17 @@ class GameState():
             self.board[move.startRow][move.startCol] = move.pieceMoved  # put the piece back to its original square
             self.board[move.endRow][move.endCol] = move.pieceCaptured  # put the captured piece back on the board
             self.whiteToMove = not self.whiteToMove  # switch turns back
+
+    # all moves with checks
+    def getValidMoves(self):
+        return self.getAllPossibleMoves()  # for now, we will not worry about checks
+    
+
+    
+    #'''genrating all possible moves for the current player'''
+    def getAllPossibleMoves(self):
+        pass
+        
 class Move():
     # maps keys to values
     # key : value
