@@ -46,8 +46,41 @@ class GameState():
     
     #'''genrating all possible moves for the current player'''
     def getAllPossibleMoves(self):
+        moves =[]
+        for r in range(len(self.board)): #number of rows 
+            for c in range(len(self.board[r])):# number oif coloumns in each row 
+                turn = self.board[r][c][0] #this will give me whoes ever turn it is as i stored it in that way in the board matrix.
+                if(turn == 'w' and self.whiteToMove) or (turn == 'b' and not self.whiteToMove):
+                    piece = self.board[r][c][1] # this will give me the type of piece which is present at that particular position.
+                    if piece == 'p':
+                        self.getPawnMoves(r,c,moves)
+                    elif piece == 'R':
+                        self.getRookMoves(r,c,moves)   
+                    elif piece == 'N':
+                        self.getKnightMoves(r,c,moves)
+                    elif piece == 'B': 
+                        self.getBishopMoves(r,c,moves)
+                    elif piece == 'Q':
+                        self.getQueenMoves(r,c,moves)
+                    elif piece == 'K':
+                        self.getKingMoves(r,c,moves)
+                    
+        return moves
+
+
+
+    def getPawnMoves(self,r,c,moves):
         pass
-        
+    def getRookMoves(self,r,c,moves):
+        pass
+    def getKnightMoves(self,r,c,moves):
+        pass
+    def getBishopMoves(self,r,c,moves):
+        pass
+    def getQueenMoves(self,r,c,moves):
+        pass
+    def getKingMoves(self,r,c,moves):
+        pass
 class Move():
     # maps keys to values
     # key : value
