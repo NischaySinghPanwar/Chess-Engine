@@ -11,7 +11,7 @@ from Chess import ChessEngine
 WIDTH = HEIGHT = 512  # 400 is another option
 DIMENSION = 8  # dimensions of a chess board are 8x8
 SQ_SIZE = HEIGHT // DIMENSION
-MAX_FPS = 60  # for animations later on
+MAX_FPS = 15  # for animations later on
 IMAGES = {}
 
 ''' 
@@ -32,6 +32,9 @@ def main():
     clock = p.time.Clock()
     screen.fill(p.Color("white"))
     gs = ChessEngine.GameState()
+    validMoves = gs.getValidMoves()#very expensive to call it every time.
+    moveMade = False  # flag variable for when a move is made
+
     loadImages()  # only do this once, before the while loop
     running = True
     sqSelected = ()  # no square is selected, keep track of the last click of the user (tuple: (row, col))
@@ -53,13 +56,21 @@ def main():
                 if len(playerClicks) == 2:  # after the 2nd click
                     move = ChessEngine.Move(playerClicks[0], playerClicks[1], gs.board)
                     print(move.getChessNotation())
+                    if move in validMoves:
+                        gs.makeMove(move)
+                        moveMade = True # we have made a move
                     gs.makeMove(move)
                     sqSelected = ()  # reset user clicks
                     playerClicks = []
+            #Key handler        
             elif e.type == p.KEYDOWN:
                 if e.key == p.K_z:  # undo when 'z' is pressed
                     gs.undoMove()
+                    moveMade = True
         # Call drawGameState to render the board and pieces
+        if moveMade:
+            validMoves = gs.getValidMoves()#very expensive to call it every time.
+            moveMade = False
         drawGameState(screen, gs)
         
         clock.tick(MAX_FPS)
