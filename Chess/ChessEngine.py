@@ -70,29 +70,91 @@ class GameState():
             if c+1<=7 and r-1 >= 0:
                 if self.board[r-1][c+1][0] == 'b': #capture black piece to the right
                     moves.append(Move((r,c),(r-1,c+1),self.board))
-        else:  # Black pawns
-            if r+1 <= 7 and self.board[r+1][c] == "--":  # 1 square move
+        else: #black pawn moves
+            if self.board[r+1][c] == "--": #1 square move
                 moves.append(Move((r,c),(r+1,c),self.board))
-                if r == 1 and self.board[r+2][c] == "--":  # 2 square move from starting position
+                if r == 1 and self.board[r+2][c] == "--": #2 square move
                     moves.append(Move((r,c),(r+2,c),self.board))
-            # Black captures
-            if c-1 >= 0 and r+1 <= 7:
-                if self.board[r+1][c-1][0] == 'w':  # capture white piece to the left
+            # Capture moves
+            if c-1>=0 and r+1 <= 7:
+                if self.board[r+1][c-1][0] == 'w': #capture white piece to the left
                     moves.append(Move((r,c),(r+1,c-1),self.board))
-            if c+1 <= 7 and r+1 <= 7:
-                if self.board[r+1][c+1][0] == 'w':  # capture white piece to the right
+            if c+1<=7 and r+1 <= 7:
+                if self.board[r+1][c+1][0] == 'w': #capture white piece to the right
                     moves.append(Move((r,c),(r+1,c+1),self.board))
 
+
+
+ #all possible move of Bishop
     def getBishopMoves(self,r,c,moves):
-        pass
+        directions = ((-1,-1),(-1,1),(1,-1),(1,1)) #up left , up right , down left , down right
+        enemyColor = "b" if self.whiteToMove else "w"
+        for d in directions:
+            for i in range(1,8):
+                endRow = r + d[0]*i
+                endCol = c + d[1]*i
+                if 0 <= endRow < 8 and 0 <= endCol < 8: #on board
+                    endPiece = self.board[endRow][endCol]
+                    if endPiece == "--": #empty space valid
+                        moves.append(Move((r,c),(endRow,endCol),self.board))
+                    elif endPiece[0] == enemyColor: #enemy piece valid
+                        moves.append(Move((r,c),(endRow,endCol),self.board))
+                        break
+                    else: #friendly piece invalid
+                        break
+                else: #off board
+                    break 
+
+
+    #all possible move of Rook
     def getRookMoves(self,r,c,moves):
-        pass   
+        directions = ((-1,0),(0,-1),(1,0),(0,1)) #up , left , down , right
+        enemyColor = "b" if self.whiteToMove else "w"
+        for d in directions:
+            for i in range(1,8):
+                endRow = r + d[0]*i
+                endCol = c + d[1]*i
+                if 0 <= endRow < 8 and 0 <= endCol < 8: #on board
+                    endPiece = self.board[endRow][endCol]
+                    if endPiece == "--": #empty space valid
+                        moves.append(Move((r,c),(endRow,endCol),self.board))
+                    elif endPiece[0] == enemyColor: #enemy piece valid
+                        moves.append(Move((r,c),(endRow,endCol),self.board))
+                        break
+                    else: #friendly piece invalid
+                        break
+                else: #off board
+                    break
+        
     def getQueenMoves(self,r,c,moves):
-        pass
+        self.getRookMoves(r,c,moves)
+        self.getBishopMoves(r,c,moves)
+
+
+    #all possible move of King
     def getKingMoves(self,r,c,moves):
-        pass
+        directions = ((-1,-1),(-1,0),(-1,1),(0,-1),(0,1),(1,-1),(1,0),(1,1))
+        allyColor = "w" if self.whiteToMove else "b"
+        for i in range(8):
+            endRow = r+directions[i][0]
+            endCol = c+directions[i][1]
+            if 0<= endRow <8 and 0<= endCol<8:
+                endPiece = self.board[endRow][endCol]
+                if endPiece[0] != allyColor:  # Can move to empty squares or capture enemy pieces
+                    moves.append(Move((r,c),(endRow,endCol),self.board))
+
+#all possible move of Knight
     def getKnightMoves(self,r,c,moves):  # Fixed typo: maoves -> moves
-        pass
+        directions = ((-2,-1),(-2,1),(-1,-2),(-1,2),(1,-2),(1,2),(2,-1),(2,1)) #8 possible moves for a knight
+        allyColor="w" if self.whiteToMove else "b"
+        for m in directions:
+            endRow = r+m[0]
+            endCol = c+m[1]  # Fixed: was c+m[0], should be c+m[1]
+            if 0<= endRow <8  and 0<=endCol<8:
+                endPiece = self.board[endRow][endCol]
+                if endPiece[0] != allyColor:  # Can move to empty squares or capture enemy pieces
+                    moves.append(Move((r,c),(endRow,endCol),self.board))
+
 class Move():
     # maps keys to values
     # key : value
