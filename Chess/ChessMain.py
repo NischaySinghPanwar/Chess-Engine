@@ -59,7 +59,9 @@ def main():
                     if move in validMoves:
                         gs.makeMove(move)
                         moveMade = True # we have made a move
-                    gs.makeMove(move)
+                        print("Valid move made!")
+                    else:
+                        print("Invalid move!")
                     sqSelected = ()  # reset user clicks
                     playerClicks = []
             #Key handler        
