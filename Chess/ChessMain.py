@@ -50,20 +50,27 @@ def main():
                 if sqSelected == (row, col):  # the user clicked the same square twice
                     sqSelected = ()  # deselect
                     playerClicks = []  # clear player clicks
+                    print("Deselected square")
                 else:
                     sqSelected = (row, col)
                     playerClicks.append(sqSelected)  # append for both 1st and 2nd clicks
+                    print(f"Selected square: {sqSelected}, piece: {gs.board[row][col]}")
+                    
                 if len(playerClicks) == 2:  # after the 2nd click
                     move = ChessEngine.Move(playerClicks[0], playerClicks[1], gs.board)
-                    print(move.getChessNotation())
+                    print(f"Attempting move: {move.getChessNotation()}")
                     if move in validMoves:
                         gs.makeMove(move)
                         moveMade = True # we have made a move
+                        sqSelected = ()  # reset user clicks
+                        playerClicks = []
                         print("Valid move made!")
                     else:
-                        print("Invalid move!")
-                    sqSelected = ()  # reset user clicks
-                    playerClicks = []
+                        # Reset to just the current square selection
+                        sqSelected = (row, col)
+                        playerClicks = [sqSelected]
+                        print("Invalid move! Starting new selection.")
+
             #Key handler        
             elif e.type == p.KEYDOWN:
                 if e.key == p.K_z:  # undo when 'z' is pressed
@@ -73,7 +80,7 @@ def main():
         if moveMade:
             validMoves = gs.getValidMoves()#very expensive to call it every time.
             moveMade = False
-        drawGameState(screen, gs)
+        drawGameState(screen, gs, sqSelected, validMoves)
         
         clock.tick(MAX_FPS)
         p.display.flip()
@@ -81,20 +88,41 @@ def main():
 '''
 Responsible for all the graphics within a current game state.
 '''
-def drawGameState(screen, gs):
+def drawGameState(screen, gs, sqSelected, validMoves):
     drawBoard(screen)  # draw squares on the board
-    # add in piece highlighting or move suggestions (later)
+    highlightSquares(screen, gs, sqSelected, validMoves)  # highlight selected square and valid moves
     drawPieces(screen, gs.board)  # draw pieces on top of those squares
 
 '''
 Draw the squares on the board. The top left square is always light.
 '''
 def drawBoard(screen):
-    colors = [p.Color("white"), p.Color("grey")]
+    colors = [p.Color("#EEEED2"), p.Color("#769656")]
     for r in range(DIMENSION):
         for c in range(DIMENSION):
             color = colors[((r + c) % 2)]
             p.draw.rect(screen, color, p.Rect(c*SQ_SIZE, r*SQ_SIZE, SQ_SIZE, SQ_SIZE))
+
+'''
+Highlight selected square and show valid moves
+'''
+def highlightSquares(screen, gs, sqSelected, validMoves):
+    if sqSelected != ():
+        r, c = sqSelected
+        # Highlight selected square with green overlay
+        s = p.Surface((SQ_SIZE, SQ_SIZE))
+        s.set_alpha(100)  # transparency value -> 0 transparent; 255 opaque
+        s.fill(p.Color('green'))
+        screen.blit(s, (c*SQ_SIZE, r*SQ_SIZE))
+        
+        # Draw small circles on all valid move positions for the selected piece
+        for move in validMoves:
+            if move.startRow == r and move.startCol == c:
+                # Calculate center of the destination square
+                centerX = move.endCol * SQ_SIZE + SQ_SIZE // 2
+                centerY = move.endRow * SQ_SIZE + SQ_SIZE // 2
+                # Draw a small circle
+                p.draw.circle(screen, p.Color('darkgrey'), (centerX, centerY), 14)
 
 '''
 Draw the pieces on the board using the current GameState.board
